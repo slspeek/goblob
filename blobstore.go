@@ -3,6 +3,7 @@ package goblob
 import "errors"
 import "labix.org/v2/mgo"
 import "labix.org/v2/mgo/bson"
+import "time"
 
 type BlobService struct {
 	s  *mgo.Session
@@ -72,6 +73,14 @@ func (f *File) Id() string {
 
 func (f *File) Size() int64 {
 	return f.gf.Size()
+}
+
+func (f *File) UploadDate() time.Time {
+	return f.gf.UploadDate()
+}
+
+func (f *File) Seek(offset int64, whence int) (pos int64, err error){
+  return f.gf.Seek(offset, whence)
 }
 
 func (b *BlobService) gridfs() *mgo.GridFS {

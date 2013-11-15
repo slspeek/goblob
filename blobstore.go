@@ -71,6 +71,10 @@ func (f *File) Id() string {
 	return oid.Hex()
 }
 
+func (f *File) MD5() (md5sum string) {
+	return f.gf.MD5()
+}
+
 func (f *File) Size() int64 {
 	return f.gf.Size()
 }

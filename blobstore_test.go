@@ -2,14 +2,16 @@ package goblob
 
 import (
 	"io"
+	"labix.org/v2/mgo"
 	"testing"
 )
 
 func bs() *BlobService {
-	b, err := NewBlobService("localhost", "test", "fs")
+	s, err := mgo.Dial("localhost")
 	if err != nil {
-		panic("no blobstore service could be created")
+		panic("could not connect to mongo")
 	}
+	b := NewBlobService(s, "test", "fs")
 	return b
 }
 
@@ -25,6 +27,15 @@ func TestWrongFormatId(t *testing.T) {
 func TestNonExistingId(t *testing.T) {
 	b := bs()
 	_, err := b.Open("4d88e15b60f486e428412dc9")
+	if err == nil {
+		t.Fail()
+	}
+	t.Log("err: ", err)
+}
+
+func TestNonExistingName(t *testing.T) {
+	b := bs()
+	_, err := b.OpenName("FooBar")
 	if err == nil {
 		t.Fail()
 	}

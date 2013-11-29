@@ -11,9 +11,8 @@ type BlobService struct {
 	fs string
 }
 
-func NewBlobService(host, db, fs string) (*BlobService, error) {
-	s, err := mgo.Dial(host)
-	return &BlobService{s, db, fs}, err
+func NewBlobService(s *mgo.Session, db, fs string) *BlobService {
+	return &BlobService{s, db, fs}
 }
 
 func (b *BlobService) Create(fn string) (*File, error) {
@@ -83,8 +82,8 @@ func (f *File) UploadDate() time.Time {
 	return f.gf.UploadDate()
 }
 
-func (f *File) Seek(offset int64, whence int) (pos int64, err error){
-  return f.gf.Seek(offset, whence)
+func (f *File) Seek(offset int64, whence int) (pos int64, err error) {
+	return f.gf.Seek(offset, whence)
 }
 
 func (b *BlobService) gridfs() *mgo.GridFS {

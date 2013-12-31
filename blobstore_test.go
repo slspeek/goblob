@@ -54,7 +54,7 @@ func TestRemove(t *testing.T) {
 		t.Fail()
 	}
 	t.Log("gridfile: ", gridfile)
-	id := gridfile.Id()
+	id := gridfile.StringId()
 	b.Remove(id)
 	_, err = b.Open(id)
 	if err == nil {
@@ -110,7 +110,7 @@ func TestWriteToGridfileAndCloseAndReadback(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	id1 = gridfile.Id()
+	id1 = gridfile.StringId()
 	const hello = "Hello World!"
 	_, err = gridfile.Write([]byte(hello))
 	if err != nil {
@@ -124,7 +124,7 @@ func TestWriteToGridfileAndCloseAndReadback(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	id2 = reopened.Id()
+	id2 = reopened.StringId()
 	bs := make([]byte, reopened.Size())
 	_, err = reopened.Read(bs)
 	if err != nil {
@@ -146,7 +146,7 @@ func TestFindById(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	id1 := gridfile.Id()
+	id1 := gridfile.StringId()
 	const hello = "Hello World!"
 	_, err = gridfile.Write([]byte(hello))
 	if err != nil {
@@ -160,7 +160,7 @@ func TestFindById(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-	id2 := reopened.Id()
+	id2 := reopened.StringId()
 	t.Log("id2", id2)
 	t.Log("reopened: ", reopened)
 	bs := make([]byte, reopened.Size())

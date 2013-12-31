@@ -3,7 +3,6 @@ package goblob
 import "errors"
 import "labix.org/v2/mgo"
 import "labix.org/v2/mgo/bson"
-import "time"
 
 type BlobService struct {
 	s  *mgo.Session
@@ -49,41 +48,13 @@ func (b *BlobService) Open(id string) (*File, error) {
 }
 
 type File struct {
-	gf *mgo.GridFile
+	*mgo.GridFile
 }
 
-func (f *File) Close() {
-	f.gf.Close()
-}
-
-func (f *File) Write(b []byte) (int, error) {
-	return f.gf.Write(b)
-}
-
-func (f *File) Read(b []byte) (int, error) {
-	return f.gf.Read(b)
-}
-
-func (f *File) Id() string {
-	blobKey := f.gf.Id()
+func (f *File) StringId() string {
+	blobKey := f.Id()
 	oid := blobKey.(bson.ObjectId)
 	return oid.Hex()
-}
-
-func (f *File) MD5() (md5sum string) {
-	return f.gf.MD5()
-}
-
-func (f *File) Size() int64 {
-	return f.gf.Size()
-}
-
-func (f *File) UploadDate() time.Time {
-	return f.gf.UploadDate()
-}
-
-func (f *File) Seek(offset int64, whence int) (pos int64, err error) {
-	return f.gf.Seek(offset, whence)
 }
 
 func (b *BlobService) gridfs() *mgo.GridFS {

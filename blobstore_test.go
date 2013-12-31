@@ -17,6 +17,7 @@ func bs() *BlobService {
 
 func TestWrongFormatId(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	_, err := b.Open("00")
 	if err == nil {
 		t.Fail()
@@ -26,6 +27,7 @@ func TestWrongFormatId(t *testing.T) {
 
 func TestNonExistingId(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	_, err := b.Open("4d88e15b60f486e428412dc9")
 	if err == nil {
 		t.Fail()
@@ -35,6 +37,7 @@ func TestNonExistingId(t *testing.T) {
 
 func TestNonExistingName(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	_, err := b.OpenName("FooBar")
 	if err == nil {
 		t.Fail()
@@ -44,11 +47,13 @@ func TestNonExistingName(t *testing.T) {
 
 func TestOpenMongo(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	t.Log("Session: ", b.s)
 }
 
 func TestRemove(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	gridfile, err := b.Create("empty.txt")
 	if err != nil {
 		t.Fail()
@@ -65,6 +70,7 @@ func TestRemove(t *testing.T) {
 
 func TestCreateGridFile(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	gridfile, err := b.Create("empty.txt")
 	if err != nil {
 		t.Fail()
@@ -75,6 +81,7 @@ func TestCreateGridFile(t *testing.T) {
 
 func TestWriteToGridfile(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	gridfile, err := b.Create("test_file.txt")
 	if err != nil {
 		t.Fail()
@@ -89,6 +96,7 @@ func TestWriteToGridfile(t *testing.T) {
 
 func TestWriteToGridfileAndClose(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	gridfile, err := b.Create("second_test_file.txt")
 	if err != nil {
 		t.Fail()
@@ -105,6 +113,7 @@ func TestWriteToGridfileAndClose(t *testing.T) {
 
 func TestWriteToGridfileAndCloseAndReadback(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	var id1, id2 interface{}
 	gridfile, err := b.Create("third.txt")
 	if err != nil {
@@ -142,6 +151,7 @@ func TestWriteToGridfileAndCloseAndReadback(t *testing.T) {
 
 func TestFindById(t *testing.T) {
 	b := bs()
+	defer b.Close()
 	gridfile, err := b.Create("Fourth.txt")
 	if err != nil {
 		t.Fail()

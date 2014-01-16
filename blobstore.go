@@ -1,8 +1,10 @@
 package goblob
 
 import "errors"
+import "io"
 import "labix.org/v2/mgo"
 import "labix.org/v2/mgo/bson"
+import "os"
 
 type BlobService struct {
 	s  *mgo.Session
@@ -33,6 +35,24 @@ func (b *BlobService) Remove(id string) error {
 	return b.gridfs().RemoveId(blobKey)
 }
 
+func (b *BlobService) ReadFile(path string) (blobId string, err error) {
+  inputf, err := os.Open(path) 
+  if err != nil {
+    return
+  }
+  outputf, err := b.Create(path) 
+  if err != nil {
+    return
+  }
+  _, err = io.Copy(outputf, inputf)
+  if err != nil {
+    return
+  }
+  blobId = outputf.StringId()
+  err = outputf.Close()
+  return
+}
+
 func (b *BlobService) Close() {
 	b.s.Close()
 }
@@ -60,4 +80,17 @@ func (f *File) StringId() string {
 func (b *BlobService) gridfs() *mgo.GridFS {
 	db := b.s.DB(b.db)
 	return db.GridFS(b.fs)
+}
+
+func WriteFile(filename string, file *File) (err error) {
+	output, err := os.Create(filename)
+	if err != nil {
+		return
+	}
+	_, err = io.Copy(output, file)
+	if err != nil {
+		return
+	}
+	err = output.Close()
+	return
 }

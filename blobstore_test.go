@@ -1,8 +1,11 @@
 package goblob
 
 import (
+	"fmt"
 	"io"
+	"io/ioutil"
 	"labix.org/v2/mgo"
+	"os"
 	"testing"
 )
 
@@ -186,6 +189,74 @@ func TestFindById(t *testing.T) {
 		t.Fail()
 	}
 	b.RemoveName("Fourth.txt")
+
+}
+
+func TestWriteFile(t *testing.T) {
+	b := bs()
+	defer b.Close()
+	gridfile, err := b.Create("Fourth.txt")
+	if err != nil {
+		t.Fail()
+	}
+	id1 := gridfile.StringId()
+	const hello = "Hello World!"
+	_, err = gridfile.Write([]byte(hello))
+	if err != nil {
+		t.Fail()
+	}
+	gridfile.Close()
+	if err != nil {
+		t.Fail()
+	}
+
+	reopenedGf, err := b.Open(id1)
+	if err != nil {
+		t.Fail()
+	}
+	err = WriteFile("fourth_tmp", reopenedGf)
+	reopenedGf.Close()
+	file, err := os.Open("fourth_tmp")
+	if err != nil {
+		t.Fail()
+	}
+	t.Log("file: ", file)
+	file.Close()
+	os.Remove("fourth_tmp")
+
+}
+
+func TestReadFile(t *testing.T) {
+	b := bs()
+	defer b.Close()
+	const hello = "Hello World!"
+	diskf, err := os.Create("input.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Fprint(diskf, hello)
+	err = diskf.Close()
+	if err != nil {
+		t.Fatal(err)
+	}
+
+  id, err := b.ReadFile("input.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	reopenedGf, err := b.Open(id)
+	if err != nil {
+		t.Fail()
+	}
+  data, err := ioutil.ReadAll(reopenedGf)
+	if err != nil {
+		t.Fail()
+	}
+  if string(data) != hello {
+    t.Fatal("Expected: ", hello, " Got: ", data)
+  }
+	os.Remove("input.txt")
 
 }
 

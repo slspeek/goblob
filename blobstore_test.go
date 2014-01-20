@@ -226,6 +226,44 @@ func TestWriteFile(t *testing.T) {
 
 }
 
+func TestWriteOutFile(t *testing.T) {
+	b := bs()
+	defer b.Close()
+	gridfile, err := b.Create("Fourth.txt")
+	if err != nil {
+		t.Fail()
+	}
+	id := gridfile.StringId()
+	const hello = "Hello World!"
+	_, err = gridfile.Write([]byte(hello))
+	if err != nil {
+		t.Fail()
+	}
+	err = gridfile.Close()
+	if err != nil {
+		t.Fail()
+	}
+
+	err = b.WriteOutFile(id, "fourth_tmp")
+	if err != nil {
+		t.Fail()
+	}
+	file, err := os.Open("fourth_tmp")
+	if err != nil {
+		t.Fail()
+	}
+	t.Log("file: ", file)
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		t.Fail()
+	}
+	if string(data) != hello {
+		t.Fatal("Expected: ", hello, " Got: ", data)
+	}
+	file.Close()
+	os.Remove("fourth_tmp")
+}
+
 func TestReadFile(t *testing.T) {
 	b := bs()
 	defer b.Close()
@@ -240,7 +278,7 @@ func TestReadFile(t *testing.T) {
 		t.Fatal(err)
 	}
 
-  id, err := b.ReadFile("input.txt")
+	id, err := b.ReadFile("input.txt")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -249,13 +287,13 @@ func TestReadFile(t *testing.T) {
 	if err != nil {
 		t.Fail()
 	}
-  data, err := ioutil.ReadAll(reopenedGf)
+	data, err := ioutil.ReadAll(reopenedGf)
 	if err != nil {
 		t.Fail()
 	}
-  if string(data) != hello {
-    t.Fatal("Expected: ", hello, " Got: ", data)
-  }
+	if string(data) != hello {
+		t.Fatal("Expected: ", hello, " Got: ", data)
+	}
 	os.Remove("input.txt")
 
 }

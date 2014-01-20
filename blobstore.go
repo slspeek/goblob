@@ -53,6 +53,15 @@ func (b *BlobService) ReadFile(path string) (blobId string, err error) {
   return
 }
 
+func (b *BlobService) WriteOutFile(id string, path string) (err error) {
+  blobFile, err :=  b.Open(id)
+  if err != nil {
+    return
+  }
+  err = WriteFile(path, blobFile)
+  return
+}
+
 func (b *BlobService) Close() {
 	b.s.Close()
 }
